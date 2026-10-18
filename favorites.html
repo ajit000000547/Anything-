@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Favorites — NeuraHub</title>
+<link rel="stylesheet" href="css/variables.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body data-page="favorites">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar-root" aria-label="Main navigation"></aside>
+    <div class="main-area">
+      <header class="app-header" id="app-header-root"></header>
+      <main class="main-content" id="main">
+        <div class="page-header">
+          <div class="page-eyebrow">Saved</div>
+          <h1>Favorites</h1>
+          <p>Your bookmarked AI tools, ready in one tap.</p>
+        </div>
+        <div class="tool-grid" id="favGrid"></div>
+      </main>
+    </div>
+  </div>
+  <div id="bottom-nav-root"></div>
+
+  <script src="js/config/tools-config.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/components/theme.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/components/tool-card.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    mountSidebar("favorites", "");
+    mountAppHeader({ rootPrefix: "", showSearch: false });
+    mountBottomNav("favorites", "");
+
+    function renderFavGrid() {
+      const favs = getFavorites();
+      const grid = document.getElementById("favGrid");
+      if (!favs.length) {
+        grid.innerHTML = `<div class="state-block" style="grid-column: 1 / -1;">
+          <div class="state-icon">⭐</div>
+          <h3 class="state-title">No favorites yet</h3>
+          <p class="state-desc">Tap the heart icon on any AI tool to save it here for quick access.</p>
+          <a href="dashboard.html" class="btn btn-primary" style="margin-top:var(--space-2);">Explore AI Tools</a>
+        </div>`;
+        return;
+      }
+      const tools = favs.map(getToolById).filter(Boolean);
+      grid.innerHTML = renderToolGrid(tools, "");
+    }
+
+    renderFavGrid();
+    document.getElementById("favGrid").addEventListener("click", function (e) {
+      if (e.target.closest("[data-fav-toggle]")) setTimeout(renderFavGrid, 50);
+    });
+    wireFavoriteButtons(document.getElementById("favGrid"));
+  </script>
+</body>
+</html>

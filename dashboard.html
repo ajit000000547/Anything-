@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — NeuraHub</title>
+<link rel="stylesheet" href="css/variables.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<style>
+  .quick-actions { display: flex; gap: var(--space-3); margin: var(--space-6) 0; flex-wrap: wrap; }
+  .quick-action-card {
+    flex: 1; min-width: 180px;
+    display: flex; align-items: center; gap: var(--space-3);
+    background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+  .quick-action-card:hover { border-color: var(--color-primary); text-decoration: none; }
+  .section-row { display: flex; align-items: center; justify-content: space-between; margin: var(--space-8) 0 var(--space-4); }
+  .section-row a { font-size: var(--text-sm); font-weight: 600; }
+  .mini-list { display: flex; flex-direction: column; gap: var(--space-2); }
+  .mini-row {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3); border-radius: var(--radius-sm);
+    background: var(--bg-surface); border: 1px solid var(--border-color);
+  }
+  .mini-row:hover { border-color: var(--border-color-strong); text-decoration: none; }
+  .mini-row-icon { width:32px;height:32px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .mini-row-title { font-size: var(--text-sm); font-weight: 500; color: var(--text-primary); }
+  .mini-row-meta { font-size: var(--text-xs); color: var(--text-tertiary); }
+</style>
+</head>
+<body data-page="dashboard">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar-root" aria-label="Main navigation"></aside>
+
+    <div class="main-area">
+      <header class="app-header" id="app-header-root"></header>
+
+      <main class="main-content" id="main">
+        <div class="page-header">
+          <div class="page-eyebrow">Dashboard</div>
+          <h1 id="welcomeHeading">Welcome back!</h1>
+          <p>What do you want to create today?</p>
+        </div>
+
+        <div class="quick-actions">
+          <a class="quick-action-card" href="tools/ai-chat/index.html"><span style="font-size:20px;">🤖</span><div><strong>New Chat</strong><div class="form-hint">Start a fresh conversation</div></div></a>
+          <a class="quick-action-card" href="tools/ai-writer/index.html"><span style="font-size:20px;">✍️</span><div><strong>Write something</strong><div class="form-hint">Blog, caption or copy</div></div></a>
+          <a class="quick-action-card" href="tools/ai-quiz-generator/index.html"><span style="font-size:20px;">🧠</span><div><strong>Make a quiz</strong><div class="form-hint">From any topic</div></div></a>
+        </div>
+
+        <div class="category-tabs" id="categoryTabs"></div>
+
+        <div class="tool-grid" id="toolGrid"></div>
+
+        <div class="section-row">
+          <h2 style="margin:0;">Recently used</h2>
+          <a href="history.html">View all history</a>
+        </div>
+        <div class="mini-list" id="recentList"></div>
+
+        <div class="section-row">
+          <h2 style="margin:0;">Your favorites</h2>
+          <a href="favorites.html">View all favorites</a>
+        </div>
+        <div class="mini-list" id="favList"></div>
+      </main>
+    </div>
+  </div>
+  <div id="bottom-nav-root"></div>
+
+  <script src="js/config/tools-config.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/components/theme.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/components/tool-card.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    mountSidebar("dashboard", "");
+    mountAppHeader({ rootPrefix: "" });
+    mountBottomNav("dashboard", "");
+
+    document.getElementById("welcomeHeading").textContent = "Welcome back, " + MOCK_USER.name.split(" ")[0] + "!";
+
+    let activeCategory = "all";
+    let searchTerm = "";
+
+    function renderCategoryTabs() {
+      document.getElementById("categoryTabs").innerHTML = TOOL_CATEGORIES.map(function (c) {
+        return `<button class="category-chip${c.id === activeCategory ? " active" : ""}" data-cat="${c.id}">${c.label}</button>`;
+      }).join("");
+    }
+
+    function renderTools() {
+      const filtered = TOOLS_CONFIG.filter(function (t) {
+        const matchesCat = activeCategory === "all" || t.category === activeCategory;
+        const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCat && matchesSearch;
+      });
+      const grid = document.getElementById("toolGrid");
+      grid.innerHTML = renderToolGrid(filtered, "");
+    }
+
+    function renderRecent() {
+      document.getElementById("recentList").innerHTML = MOCK_HISTORY.slice(0, 4).map(function (h) {
+        const tool = getToolById(h.toolId);
+        return `<a class="mini-row" href="${tool.path}">
+          <div class="mini-row-icon">${tool.icon}</div>
+          <div><div class="mini-row-title">${h.title}</div><div class="mini-row-meta">${tool.name} · ${h.date}</div></div>
+        </a>`;
+      }).join("");
+    }
+
+    function renderFavs() {
+      const favs = getFavorites();
+      const favEl = document.getElementById("favList");
+      if (!favs.length) {
+        favEl.innerHTML = `<div class="state-block" style="padding:var(--space-6);">
+          <div class="state-icon">⭐</div>
+          <h3 class="state-title">No favorites yet</h3>
+          <p class="state-desc">Tap the heart on any tool to save it here.</p>
+        </div>`;
+        return;
+      }
+      favEl.innerHTML = favs.map(function (id) {
+        const tool = getToolById(id);
+        if (!tool) return "";
+        return `<a class="mini-row" href="${tool.path}">
+          <div class="mini-row-icon">${tool.icon}</div>
+          <div><div class="mini-row-title">${tool.name}</div><div class="mini-row-meta">${tool.description}</div></div>
+        </a>`;
+      }).join("");
+    }
+
+    function onGlobalSearch(value) {
+      searchTerm = value;
+      renderTools();
+    }
+
+    renderCategoryTabs();
+    renderTools();
+    renderRecent();
+    renderFavs();
+
+    document.getElementById("categoryTabs").addEventListener("click", function (e) {
+      const btn = e.target.closest("[data-cat]");
+      if (!btn) return;
+      activeCategory = btn.dataset.cat;
+      renderCategoryTabs();
+      renderTools();
+    });
+
+    wireFavoriteButtons(document.getElementById("toolGrid"));
+    document.getElementById("toolGrid").addEventListener("click", function () {
+      setTimeout(renderFavs, 0); // keep favorites section in sync after toggling
+    });
+  </script>
+</body>
+</html>

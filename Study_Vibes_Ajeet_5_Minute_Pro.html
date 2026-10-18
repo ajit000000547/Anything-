@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Vibes Ajeet – 5 Minute Motivation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #FFD700;
+    --amber: #FFA500;
+    --red: #FF2D2D;
+    --bg: #050505;
+    --bg2: #0a0a0a;
+    --white: #FFFFFF;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--white);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 700px) {
+    #scene {
+      width: min(100vw, 640px);
+      height: min(56.25vw, 360px);
+      border-width: 1px;
+    }
+    .main-title { font-size: clamp(38px, 10vw, 68px); }
+    .hindi-title { font-size: clamp(22px, 5.8vw, 38px); }
+    .quote-big { font-size: clamp(18px, 4.4vw, 28px); }
+    .quote-big .highlight { font-size: clamp(22px, 5.3vw, 34px); }
+    .eng-quote { font-size: clamp(28px, 7vw, 46px); }
+    .subtitle { font-size: clamp(10px, 2.6vw, 16px); }
+    .label-tag { font-size: clamp(8px, 2vw, 11px); letter-spacing: 2px; }
+    .bottom-bar { height: 26px; }
+    .bottom-bar span { font-size: 8px; letter-spacing: 1.5px; }
+    .channel-badge { top: 8px; left: 8px; }
+    .channel-icon { width: 25px; height: 25px; font-size: 11px; }
+    .channel-name { font-size: 8px; }
+    .timer { top: 8px; right: 8px; font-size: 11px; }
+    #controls { bottom: 8px; gap: 6px; }
+    .ctrl-btn { font-size: 11px; padding: 6px 10px; }
+    .slide-counter { font-size: 14px; padding: 6px 8px; }
+  }
+
+  /* ── SCENE WRAPPER ── */
+  #scene {
+    width: 640px;
+    height: 360px;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    border: 2px solid #111;
+    box-shadow: 0 0 80px rgba(255,215,0,0.15);
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  #scene::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 99;
+    opacity: 0.25;
+  }
+
+  /* ── BACKGROUND LAYERS ── */
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .bg-layer.active { opacity: 1; }
+
+  .bg-dark-desk {
+    background: radial-gradient(ellipse at 30% 60%, #0d0d0d 0%, #000 80%);
+  }
+  .bg-sunset {
+    background: radial-gradient(ellipse at 50% 100%, #1a0a00 0%, #0a0000 60%, #000 100%);
+  }
+  .bg-midnight {
+    background: radial-gradient(ellipse at 70% 20%, #00001a 0%, #000 70%);
+  }
+  .bg-dawn {
+    background: radial-gradient(ellipse at 50% 80%, #1a0d00 0%, #000 70%);
+  }
+
+  /* ── PARTICLE STARS ── */
+  .stars {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle var(--d, 3s) infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.1; transform: scale(0.8); }
+    100% { opacity: 0.7; transform: scale(1.2); }
+  }
+
+  /* ── LIGHT RAYS ── */
+  .rays {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+  }
+  .ray {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    height: 220px;
+    background: linear-gradient(to top, rgba(255,215,0,0.15), transparent);
+    transform-origin: bottom center;
+    opacity: 0;
+    animation: rayPulse 4s infinite;
+  }
+
+  @keyframes rayPulse {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  /* ── CONTENT LAYERS ── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    z-index: 10;
+    text-align: center;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── CHANNEL LOGO ── */
+  .channel-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 50;
+    opacity: 0;
+    animation: fadeInDown 0.8s 0.5s forwards;
+  }
+  .channel-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--amber));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #000;
+    font-weight: 900;
+    font-family: 'Bebas Neue', sans-serif;
+  }
+  .channel-name {
+    font-size: 11px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--amber));
+    z-index: 50;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px var(--gold);
+  }
+
+  /* ── TIMER ── */
+  .timer {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    color: rgba(255,215,0,0.5);
+    letter-spacing: 2px;
+    z-index: 50;
+  }
+
+  /* ── TYPOGRAPHY STYLES ── */
+  .label-tag {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    opacity: 0.8;
+    position: relative;
+  }
+  .label-tag::before, .label-tag::after {
+    content: '─';
+    margin: 0 8px;
+    opacity: 0.5;
+  }
+
+  .main-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 68px;
+    line-height: 1;
+    color: var(--white);
+    letter-spacing: 3px;
+    text-shadow: 0 0 40px rgba(255,215,0,0.3), 2px 2px 0 rgba(0,0,0,0.8);
+    margin-bottom: 12px;
+  }
+  .main-title span { color: var(--gold); }
+
+  .hindi-title {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--white);
+    text-shadow: 0 0 30px rgba(255,215,0,0.4);
+    margin-bottom: 10px;
+  }
+  .hindi-title span { color: var(--gold); }
+
+  .subtitle {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .quote-big {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--white);
+    text-shadow: 0 0 20px rgba(255,165,0,0.3);
+    max-width: 560px;
+  }
+  .quote-big .highlight {
+    color: var(--gold);
+    display: block;
+    font-size: 34px;
+  }
+
+  .divider-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 14px auto;
+  }
+
+  .stat-box {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--gold);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  }
+  .stat-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+  }
+
+  .eng-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 46px;
+    line-height: 1.1;
+    color: var(--white);
+    letter-spacing: 2px;
+    max-width: 560px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
+  }
+  .eng-quote span { color: var(--gold); }
+
+  /* ── FIRE EMOJI FLOAT ── */
+  .float-fire {
+    position: absolute;
+    font-size: 24px;
+    animation: floatUp 3s infinite ease-out;
+    pointer-events: none;
+  }
+  @keyframes floatUp {
+    0% { opacity: 0; transform: translateY(0) scale(0.5); }
+    30% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
+  }
+
+  /* ── SUBSCRIBE CTA ── */
+  .subscribe-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #FF2D2D, #cc0000);
+    color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    padding: 10px 36px;
+    border-radius: 3px;
+    margin-top: 18px;
+    box-shadow: 0 4px 20px rgba(255,45,45,0.4);
+    animation: pulseSub 1.5s infinite;
+  }
+  @keyframes pulseSub {
+    0%, 100% { box-shadow: 0 4px 20px rgba(255,45,45,0.4); transform: scale(1); }
+    50% { box-shadow: 0 4px 35px rgba(255,45,45,0.7); transform: scale(1.03); }
+  }
+
+  /* ── SLIDE ANIMATIONS ── */
+  .slide-in-up { animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+  .slide-in-left { animation: slideLeft 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+  .fade-scale { animation: fadeScale 0.8s ease both; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeScale {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .delay-1 { animation-delay: 0.1s; animation-fill-mode: both; }
+  .delay-2 { animation-delay: 0.3s; animation-fill-mode: both; }
+  .delay-3 { animation-delay: 0.5s; animation-fill-mode: both; }
+  .delay-4 { animation-delay: 0.7s; animation-fill-mode: both; }
+
+  /* ── CONTROLS ── */
+  #controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 200;
+  }
+  .ctrl-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,215,0,0.3);
+    color: var(--gold);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding: 8px 20px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .ctrl-btn:hover {
+    background: rgba(255,215,0,0.15);
+    border-color: var(--gold);
+  }
+  .ctrl-btn.active-btn {
+    background: rgba(255,215,0,0.2);
+    border-color: var(--gold);
+  }
+  .slide-counter {
+    color: rgba(255,215,0,0.5);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    padding: 8px 16px;
+    letter-spacing: 2px;
+  }
+
+  /* ── GOLDEN GLOW CIRCLE ── */
+  .glow-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── BOTTOM TEXT BAR ── */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: rgba(255,215,0,0.06);
+    border-top: 1px solid rgba(255,215,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  .bottom-bar span {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: rgba(255,215,0,0.4);
+    text-transform: uppercase;
+  }
+
+  /* VERTICAL ACCENT LINES */
+  .v-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(255,215,0,0.15), transparent);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="scene">
+
+  <!-- BG LAYERS -->
+  <div class="bg-layer bg-dark-desk active" id="bg0"></div>
+  <div class="bg-layer bg-sunset" id="bg1"></div>
+  <div class="bg-layer bg-midnight" id="bg2"></div>
+  <div class="bg-layer bg-dawn" id="bg3"></div>
+  <div class="bg-layer bg-dark-desk" id="bg4"></div>
+  <div class="bg-layer bg-midnight" id="bg5"></div>
+  <div class="bg-layer bg-sunset" id="bg6"></div>
+
+  <!-- STARS -->
+  <div class="stars" id="stars"></div>
+
+  <!-- RAYS -->
+  <div class="rays" id="rays"></div>
+
+  <!-- ACCENT LINES -->
+  <div class="v-line" style="left:15%"></div>
+  <div class="v-line" style="right:15%"></div>
+
+  <!-- GLOW CIRCLES -->
+  <div class="glow-circle" style="width:300px;height:300px;top:-80px;right:-60px;"></div>
+  <div class="glow-circle" style="width:200px;height:200px;bottom:-50px;left:40px;"></div>
+
+  <!-- CHANNEL BADGE -->
+  <div class="channel-badge">
+    <div class="channel-icon">A</div>
+    <div class="channel-name">Study Vibes Ajeet</div>
+  </div>
+
+  <!-- TIMER -->
+  <div class="timer" id="timerDisp">5:00</div>
+
+  <!-- ═══════════════════════════ SLIDES ═══════════════════════════ -->
+
+  <!-- SLIDE 0 – INTRO / HOOK -->
+  <div class="slide active" id="slide-0">
+    <div class="label-tag slide-in-up delay-1">Are You Ready?</div>
+    <div class="main-title slide-in-up delay-2">
+      <span>STRUGGLE</span><br>IS YOUR<br>TEACHER
+    </div>
+    <div class="divider-line fade-scale delay-3"></div>
+    <div class="subtitle slide-in-up delay-3">Every Night You Study, You Win</div>
+    <div class="float-fire" style="left:18%;bottom:60px;animation-delay:0s">🔥</div>
+    <div class="float-fire" style="right:20%;bottom:80px;animation-delay:1.2s">🔥</div>
+    <div class="float-fire" style="left:50%;bottom:50px;animation-delay:2s">⚡</div>
+  </div>
+
+  <!-- SLIDE 1 – STUDENT STRUGGLE (Hindi) -->
+  <div class="slide" id="slide-1">
+    <div class="label-tag slide-in-up delay-1">Student Life</div>
+    <div class="hindi-title slide-in-up delay-2">
+      रात को <span>अकेले</span> जागना,<br>
+      यही असली तैयारी है।
+    </div>
+    <div class="divider-line fade-scale delay-3"></div>
+    <div class="subtitle slide-in-up delay-3">जब दुनिया सो रही हो – तुम जागते रहो</div>
+    <div class="float-fire" style="left:12%;bottom:70px;animation-delay:0.4s">📚</div>
+    <div class="float-fire" style="right:10%;bottom:90px;animation-delay:1.5s">✍️</div>
+  </div>
+
+  <!-- SLIDE 2 – PARENTS EMOTION -->
+  <div class="slide" id="slide-2">
+    <div class="glow-circle" style="width:400px;height:400px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,165,0,0.06) 0%,transparent 70%)"></div>
+    <div class="label-tag slide-in-up delay-1">Parents Ki Dua</div>
+    <div class="quote-big slide-in-up delay-2">
+      <span class="highlight">"माँ-बाप की आँखें<br>तुम पर टिकी हैं…"</span>
+      उनका सपना तुम्हारी<br>
+      <span style="color:var(--amber)">मेहनत में जी रहा है।</span>
+    </div>
+    <div class="divider-line fade-scale delay-3"></div>
+    <div class="subtitle slide-in-up delay-4">उनकी थकान याद रखो – और पढ़ते रहो</div>
+  </div>
+
+  <!-- SLIDE 3 – DISCIPLINE STATS -->
+  <div class="slide" id="slide-3">
+    <div class="label-tag slide-in-up delay-1">Discipline = Success</div>
+    <div class="eng-quote slide-in-up delay-2">
+      CHAMPIONS ARE<br>
+      BUILT IN THE <span>DARK</span>
+    </div>
+    <div class="divider-line fade-scale delay-3"></div>
+    <div class="stat-box fade-scale delay-3">
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Hours Daily</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">90</div>
+        <div class="stat-label">Days Grind</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Big Result</div>
+      </div>
+    </div>
+    <div class="float-fire" style="left:50%;bottom:50px;animation-delay:0.5s">💪</div>
+  </div>
+
+  <!-- SLIDE 4 – LATE NIGHT STUDY -->
+  <div class="slide" id="slide-4">
+    <div class="label-tag slide-in-up delay-1">Late Night Study</div>
+    <div class="hindi-title slide-in-up delay-2" style="font-size:32px">
+      जब घड़ी <span>2 बजे</span> हो रात की,<br>
+      और तुम फिर भी किताब खोलते हो –<br>
+      <span style="color:var(--amber)">तभी किस्मत बदलती है।</span>
+    </div>
+    <div class="divider-line fade-scale delay-3"></div>
+    <div class="subtitle slide-in-up delay-3">Neend ko harao, Success ko jito</div>
+    <div class="float-fire" style="right:14%;top:30px;animation-delay:0.8s">🌙</div>
+    <div class="float-fire" style="left:10%;top:40px;animation-delay:1.8s">⭐</div>
+  </div>
+
+  <!-- SLIDE 5 – HARD WORK SHAYARI -->
+  <div class="slide" id="slide-5">
+    <div class="label-tag slide-in-up delay-1">Shayari</div>
+    <div class="quote-big slide-in-up delay-2" style="font-size:26px">
+      <span class="highlight" style="font-size:30px">"मेहनत इतनी खामोशी से करो,</span>
+      कि एक दिन<br>
+      <span style="color:var(--amber)">तुम्हारी सफलता</span><br>
+      सारी दुनिया में<br>
+      <span style="color:var(--red); font-size:32px">शोर मचा दे।"</span>
+    </div>
+    <div class="float-fire" style="left:8%;bottom:70px;animation-delay:0s">🔥</div>
+    <div class="float-fire" style="right:8%;bottom:70px;animation-delay:1s">🔥</div>
+  </div>
+
+  <!-- SLIDE 6 – SUBSCRIBE CTA -->
+  <div class="slide" id="slide-6">
+    <div class="label-tag fade-scale delay-1">Study Vibes Ajeet</div>
+    <div class="main-title fade-scale delay-2" style="font-size:52px">
+      YOUR SUCCESS<br>STARTS <span>TODAY</span>
+    </div>
+    <div class="divider-line fade-scale delay-3"></div>
+    <div class="hindi-title fade-scale delay-3" style="font-size:22px;color:rgba(255,255,255,0.7)">
+      हर रोज़ नई Motivation के लिए 👇
+    </div>
+    <div class="subscribe-btn delay-4">🔔 SUBSCRIBE NOW</div>
+    <div class="float-fire" style="left:16%;bottom:60px;animation-delay:0s">🔥</div>
+    <div class="float-fire" style="right:18%;bottom:60px;animation-delay:1.4s">🔥</div>
+    <div class="float-fire" style="left:50%;bottom:40px;animation-delay:2.5s">⚡</div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar" id="progressBar" style="width:0%"></div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <span>Study Vibes Ajeet &nbsp;•&nbsp; Motivation &nbsp;•&nbsp; Discipline &nbsp;•&nbsp; Success</span>
+  </div>
+
+</div><!-- /scene -->
+
+<!-- CONTROLS -->
+<div id="controls">
+  <button class="ctrl-btn" id="btnPrev" onclick="prevSlide()">◀ Prev</button>
+  <button class="ctrl-btn active-btn" id="btnPlay" onclick="togglePlay()">⏸ Pause</button>
+  <span class="slide-counter" id="slideCounter">1 / 7</span>
+  <button class="ctrl-btn" id="btnNext" onclick="nextSlide()">Next ▶</button>
+</div>
+
+<script>
+  // ── STARS GENERATION ──
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2 + 0.5;
+    s.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --d:${(Math.random()*3+2).toFixed(1)}s;
+      animation-delay:${(Math.random()*4).toFixed(1)}s;
+    `;
+    starsEl.appendChild(s);
+  }
+
+  // ── LIGHT RAYS ──
+  const raysEl = document.getElementById('rays');
+  for (let i = 0; i < 9; i++) {
+    const r = document.createElement('div');
+    r.className = 'ray';
+    r.style.transform = `translateX(-50%) rotate(${(i-4)*18}deg)`;
+    r.style.animationDelay = `${i*0.4}s`;
+    raysEl.appendChild(r);
+  }
+
+  // ── SLIDE CONFIG ──
+  const TOTAL_SLIDES = 7;
+  // Full 5-minute video timeline. Each slide stays long enough to feel like a video scene.
+  const SLIDE_DURATION = [35, 45, 45, 45, 45, 45, 40];
+  const TOTAL_SECS = SLIDE_DURATION.reduce((a, b) => a + b, 0); // 300 seconds
+
+  let currentSlide = 0;
+  let isPlaying = true;
+  let elapsed = 0;
+  let slideElapsed = 0;
+  let raf;
+  let lastTs;
+
+  function showSlide(idx) {
+    document.querySelectorAll('.slide').forEach((s, i) => {
+      s.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.bg-layer').forEach((b, i) => {
+      b.classList.toggle('active', i === idx);
+    });
+    document.getElementById('slideCounter').textContent = `${idx + 1} / ${TOTAL_SLIDES}`;
+
+    // Re-trigger animations
+    document.querySelectorAll(`#slide-${idx} [class*="slide-in"], #slide-${idx} .fade-scale`).forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight; // reflow
+      el.style.animation = '';
+    });
+  }
+
+  function nextSlide() {
+    slideElapsed = 0;
+    currentSlide = (currentSlide + 1) % TOTAL_SLIDES;
+    // Keep the 5-minute timeline moving from the selected scene.
+    showSlide(currentSlide);
+  }
+
+  function prevSlide() {
+    slideElapsed = 0;
+    currentSlide = (currentSlide - 1 + TOTAL_SLIDES) % TOTAL_SLIDES;
+    showSlide(currentSlide);
+  }
+
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    const btn = document.getElementById('btnPlay');
+    btn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+
+    if (isPlaying) {
+      lastTs = null;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    } else {
+      cancelAnimationFrame(raf);
+      raf = null;
+    }
+  }
+
+  // ── MAIN LOOP (5 min total) ──
+  const FIVE_MIN = 300; // seconds
+
+  function loop(ts) {
+    if (!isPlaying) return;
+    if (!lastTs) { lastTs = ts; }
+    const dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+
+    if (elapsed < FIVE_MIN) {
+      elapsed += dt;
+      slideElapsed += dt;
+
+      // Progress bar = total video progress
+      const pct = Math.min((elapsed / FIVE_MIN) * 100, 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+
+      // Timer display
+      const rem = Math.max(FIVE_MIN - elapsed, 0);
+      const mm = Math.floor(rem / 60);
+      const ss = Math.floor(rem % 60).toString().padStart(2, '0');
+      document.getElementById('timerDisp').textContent = `${mm}:${ss}`;
+
+      // Auto-advance slides
+      if (slideElapsed >= SLIDE_DURATION[currentSlide]) {
+        slideElapsed = 0;
+        currentSlide = (currentSlide + 1) % TOTAL_SLIDES;
+        showSlide(currentSlide);
+      }
+    } else {
+      // loop back
+      elapsed = 0;
+      currentSlide = 0;
+      slideElapsed = 0;
+      showSlide(0);
+    }
+
+    raf = requestAnimationFrame(loop);
+  }
+
+  // ── KEYBOARD CONTROLS ──
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      togglePlay();
+    }
+  });
+
+  // Pause while the tab is hidden and resume when visible.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && isPlaying) {
+      cancelAnimationFrame(raf);
+      raf = null;
+      lastTs = null;
+    } else if (!document.hidden && isPlaying) {
+      lastTs = null;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    }
+  });
+
+  // ── START ──
+  showSlide(0);
+  raf = requestAnimationFrame(loop);
+</script>
+</body>
+</html>

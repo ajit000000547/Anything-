@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>History — NeuraHub</title>
+<link rel="stylesheet" href="css/variables.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body data-page="history">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar-root" aria-label="Main navigation"></aside>
+    <div class="main-area">
+      <header class="app-header" id="app-header-root"></header>
+      <main class="main-content" id="main">
+        <div class="page-header">
+          <div class="page-eyebrow">Your activity</div>
+          <h1>History</h1>
+          <p>Everything you've generated across all AI tools.</p>
+        </div>
+
+        <div class="history-toolbar">
+          <div class="search-box" style="flex:1; min-width:220px;">
+            <span></span>
+            <input type="text" id="historySearch" placeholder="Search your history..." aria-label="Search history" />
+          </div>
+          <select id="historyFilter" style="border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--bg-muted); padding:0 var(--space-3); color:var(--text-primary);">
+            <option value="all">All tools</option>
+          </select>
+        </div>
+
+        <div class="history-list" id="historyList"></div>
+      </main>
+    </div>
+  </div>
+  <div id="bottom-nav-root"></div>
+
+  <script src="js/config/tools-config.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/components/theme.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    mountSidebar("history", "");
+    mountAppHeader({ rootPrefix: "", showSearch: false });
+    mountBottomNav("history", "");
+    document.querySelector("#historySearch").previousElementSibling.innerHTML = ICONS.search;
+
+    let historyData = MOCK_HISTORY.slice();
+    let search = "";
+    let filterTool = "all";
+
+    const filterSelect = document.getElementById("historyFilter");
+    filterSelect.innerHTML += TOOLS_CONFIG.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+
+    function renderHistory() {
+      const list = document.getElementById("historyList");
+      const filtered = historyData.filter(function (h) {
+        const matchesSearch = h.title.toLowerCase().includes(search.toLowerCase());
+        const matchesTool = filterTool === "all" || h.toolId === filterTool;
+        return matchesSearch && matchesTool;
+      });
+
+      if (!historyData.length) {
+        list.innerHTML = `<div class="state-block">
+          <div class="state-icon">🕘</div>
+          <h3 class="state-title">No history yet</h3>
+          <p class="state-desc">Results from any AI tool you use will show up here automatically.</p>
+          <a href="dashboard.html" class="btn btn-primary" style="margin-top:var(--space-2);">Explore AI Tools</a>
+        </div>`;
+        return;
+      }
+      if (!filtered.length) {
+        list.innerHTML = `<div class="state-block">
+          <div class="state-icon">🔍</div>
+          <h3 class="state-title">No matching results</h3>
+          <p class="state-desc">Try a different search term or filter.</p>
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(function (h) {
+        const tool = getToolById(h.toolId);
+        return `<div class="history-row" data-id="${h.id}">
+          <div class="history-row-icon">${tool.icon}</div>
+          <div class="history-row-body">
+            <div class="history-row-title">${escapeHtml(h.title)}</div>
+            <div class="history-row-meta">${tool.name} · ${h.date}</div>
+          </div>
+          <div class="history-row-actions">
+            <a class="btn btn-secondary btn-sm" href="${tool.path}">Open</a>
+            <button class="btn-icon" data-delete="${h.id}" aria-label="Delete">${ICONS.trash}</button>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    document.getElementById("historySearch").addEventListener("input", debounce(function (e) {
+      search = e.target.value;
+      renderHistory();
+    }, 150));
+
+    filterSelect.addEventListener("change", function (e) {
+      filterTool = e.target.value;
+      renderHistory();
+    });
+
+    document.getElementById("historyList").addEventListener("click", function (e) {
+      const delBtn = e.target.closest("[data-delete]");
+      if (!delBtn) return;
+      const id = Number(delBtn.dataset.delete);
+      historyData = historyData.filter(h => h.id !== id);
+      renderHistory();
+      showToast("Removed from history");
+    });
+
+    renderHistory();
+  </script>
+</body>
+</html>

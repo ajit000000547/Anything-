@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile — NeuraHub</title>
+<link rel="stylesheet" href="css/variables.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<style>
+  .profile-card { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-6); flex-wrap: wrap; }
+  .stat-row { display: flex; gap: var(--space-8); margin-top: var(--space-6); }
+  .stat-box b { display: block; font-family: var(--font-display); font-size: var(--text-2xl); }
+  .stat-box span { font-size: var(--text-sm); color: var(--text-tertiary); }
+</style>
+</head>
+<body data-page="profile">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar-root" aria-label="Main navigation"></aside>
+    <div class="main-area">
+      <header class="app-header" id="app-header-root"></header>
+      <main class="main-content" id="main" style="max-width:720px;">
+        <div class="page-header">
+          <div class="page-eyebrow">Account</div>
+          <h1>Profile</h1>
+        </div>
+
+        <div class="card profile-card">
+          <div class="avatar avatar-lg" id="profileAvatar"></div>
+          <div style="flex:1; min-width:200px;">
+            <h3 style="margin:0;" id="profileName"></h3>
+            <p style="margin:2px 0 0;" id="profileEmail"></p>
+            <span class="badge" id="profilePlan" style="margin-top:var(--space-2); display:inline-block;"></span>
+          </div>
+          <button class="btn btn-secondary" id="editProfileBtn">Edit profile</button>
+          <div class="stat-row" style="width:100%;">
+            <div class="stat-box"><b id="statHistory">0</b><span>Items generated</span></div>
+            <div class="stat-box"><b id="statFavs">0</b><span>Favorite tools</span></div>
+            <div class="stat-box"><b>8</b><span>Tools available</span></div>
+          </div>
+        </div>
+
+        <div class="card" id="editForm" hidden>
+          <h3>Edit profile</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editName">Full name</label>
+              <input type="text" id="editName" />
+            </div>
+            <div class="form-group">
+              <label for="editEmail">Email</label>
+              <input type="email" id="editEmail" />
+            </div>
+          </div>
+          <div style="display:flex; gap:var(--space-2);">
+            <button class="btn btn-primary" id="saveProfileBtn">Save changes</button>
+            <button class="btn btn-ghost" id="cancelEditBtn">Cancel</button>
+          </div>
+          <p class="form-hint" style="margin-top:var(--space-3);">Changes are stored on this device only until accounts are added in a later chapter.</p>
+        </div>
+
+        <div class="card">
+          <h3>Account information</h3>
+          <div class="option-row">
+            <div><div class="option-row-label">Password</div><div class="option-row-desc">Last changed — not applicable yet</div></div>
+            <button class="btn btn-secondary btn-sm" disabled>Change password</button>
+          </div>
+          <div class="option-row">
+            <div><div class="option-row-label">Plan</div><div class="option-row-desc">You're on the Free plan</div></div>
+            <button class="btn btn-secondary btn-sm" disabled>Upgrade</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="bottom-nav-root"></div>
+
+  <script src="js/config/tools-config.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/components/theme.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    mountSidebar("profile", "");
+    mountAppHeader({ rootPrefix: "", showSearch: false });
+    mountBottomNav("profile", "");
+
+    function loadProfile() {
+      document.getElementById("profileAvatar").textContent = MOCK_USER.initials;
+      document.getElementById("profileName").textContent = MOCK_USER.name;
+      document.getElementById("profileEmail").textContent = MOCK_USER.email;
+      document.getElementById("profilePlan").textContent = MOCK_USER.plan;
+      document.getElementById("statHistory").textContent = MOCK_HISTORY.length;
+      document.getElementById("statFavs").textContent = getFavorites().length;
+    }
+    loadProfile();
+
+    const editForm = document.getElementById("editForm");
+    document.getElementById("editProfileBtn").addEventListener("click", function () {
+      document.getElementById("editName").value = MOCK_USER.name;
+      document.getElementById("editEmail").value = MOCK_USER.email;
+      editForm.hidden = false;
+      editForm.scrollIntoView({ behavior: "smooth" });
+    });
+    document.getElementById("cancelEditBtn").addEventListener("click", function () { editForm.hidden = true; });
+    document.getElementById("saveProfileBtn").addEventListener("click", function () {
+      MOCK_USER.name = document.getElementById("editName").value || MOCK_USER.name;
+      MOCK_USER.email = document.getElementById("editEmail").value || MOCK_USER.email;
+      MOCK_USER.initials = MOCK_USER.name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+      loadProfile();
+      editForm.hidden = true;
+      showToast("Profile updated (UI only — not saved to a database yet)");
+    });
+  </script>
+</body>
+</html>

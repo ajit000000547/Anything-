@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Settings — NeuraHub</title>
+<link rel="stylesheet" href="css/variables.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body data-page="settings">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar-root" aria-label="Main navigation"></aside>
+    <div class="main-area">
+      <header class="app-header" id="app-header-root"></header>
+      <main class="main-content" id="main" style="max-width:720px;">
+        <div class="page-header">
+          <div class="page-eyebrow">Preferences</div>
+          <h1>Settings</h1>
+        </div>
+
+        <div class="card" style="margin-bottom:var(--space-5);">
+          <h3>Appearance</h3>
+          <div class="option-row">
+            <div>
+              <div class="option-row-label">Theme</div>
+              <div class="option-row-desc">Currently using: <span data-theme-active></span></div>
+            </div>
+            <div class="segmented">
+              <button data-mode="light">Light</button>
+              <button data-mode="dark">Dark</button>
+              <button data-mode="system">System</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:var(--space-5);">
+          <h3>Preferences</h3>
+          <div class="option-row">
+            <div>
+              <div class="option-row-label">Language</div>
+              <div class="option-row-desc">Interface language</div>
+            </div>
+            <select style="border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--bg-muted); padding:8px var(--space-3); color:var(--text-primary);">
+              <option>English</option>
+              <option>हिन्दी (Hindi)</option>
+            </select>
+          </div>
+          <div class="option-row">
+            <div>
+              <div class="option-row-label">Email notifications</div>
+              <div class="option-row-desc">Get notified about new AI tools</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked />
+              <span class="switch-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Account</h3>
+          <div class="option-row">
+            <div><div class="option-row-label">Profile</div><div class="option-row-desc">View and edit your profile</div></div>
+            <a class="btn btn-secondary btn-sm" href="profile.html">Go to profile</a>
+          </div>
+          <div class="option-row">
+            <div><div class="option-row-label">Security</div><div class="option-row-desc">Password and login options (coming soon)</div></div>
+            <button class="btn btn-secondary btn-sm" disabled>Manage</button>
+          </div>
+          <div class="option-row">
+            <div><div class="option-row-label">Log out</div><div class="option-row-desc">Sign out of NeuraHub</div></div>
+            <button class="btn btn-danger btn-sm" id="logoutBtn">Log out</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="bottom-nav-root"></div>
+
+  <script src="js/config/tools-config.js"></script>
+  <script src="js/mock/mock-data.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/components/theme.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    mountSidebar("settings", "");
+    mountAppHeader({ rootPrefix: "", showSearch: false });
+    mountBottomNav("settings", "");
+    ThemeManager.apply(ThemeManager.current()); // sync segmented control + label on load
+
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+      showToast("Log out will work once authentication is added (Chapter 9)");
+    });
+  </script>
+</body>
+</html>

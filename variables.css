@@ -1,0 +1,111 @@
+/* ============================================
+   NeuraHub — Design Tokens
+   Single source of truth for the visual system.
+   Change a value here and it updates everywhere.
+   ============================================ */
+
+:root {
+  /* ---- Brand colors ---- */
+  --color-primary: #5B5FEF;       /* indigo — primary actions, links, active states */
+  --color-primary-hover: #4A4EDB;
+  --color-primary-soft: #EEEEFD;  /* tint used behind primary elements */
+  --color-accent: #14B8A6;        /* teal — favorites, success, highlights */
+  --color-accent-soft: #E4FBF6;
+  --color-danger: #E5484D;
+  --color-danger-soft: #FDEBEC;
+  --color-warning: #F5A524;
+
+  /* ---- Light mode surfaces ---- */
+  --bg-page: #F7F8FC;
+  --bg-surface: #FFFFFF;          /* cards, panels */
+  --bg-surface-raised: #FFFFFF;
+  --bg-muted: #F0F1F7;            /* subtle fills, skeletons */
+  --border-color: #E5E7EF;
+  --border-color-strong: #D7D9E4;
+
+  /* ---- Light mode text ---- */
+  --text-primary: #14151A;
+  --text-secondary: #5B5F6D;
+  --text-tertiary: #8B8F9C;
+  --text-on-primary: #FFFFFF;
+
+  /* ---- Shadows (soft, single system) ---- */
+  --shadow-sm: 0 1px 2px rgba(20, 21, 26, 0.06);
+  --shadow-md: 0 4px 16px rgba(20, 21, 26, 0.08);
+  --shadow-lg: 0 12px 32px rgba(20, 21, 26, 0.12);
+  --shadow-focus: 0 0 0 3px rgba(91, 95, 239, 0.35);
+
+  /* ---- Radius ---- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ---- Typography ---- */
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+
+  /* ---- Layout ---- */
+  --sidebar-width: 248px;
+  --sidebar-width-collapsed: 76px;
+  --header-height: 68px;
+  --max-content-width: 1280px;
+}
+
+/* ---- Dark mode overrides ---- */
+[data-theme="dark"] {
+  --bg-page: #0F1115;
+  --bg-surface: #181B23;
+  --bg-surface-raised: #1E2129;
+  --bg-muted: #21242C;
+  --border-color: #262A35;
+  --border-color-strong: #323644;
+
+  --text-primary: #F1F2F6;
+  --text-secondary: #9195A3;
+  --text-tertiary: #6C7080;
+
+  --color-primary-soft: #23244A;
+  --color-accent-soft: #113631;
+  --color-danger-soft: #3A1E20;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
